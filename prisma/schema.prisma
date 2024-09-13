@@ -12,3 +12,23 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String    @unique
+  phoneNumber   String
+  verifyCode    String
+  verifyExpiry  DateTime
+  password      String
+  messageStatus Boolean
+  createAt      DateTime  @default(now())
+  updateAt      DateTime  @updatedAt
+  Message       Message[]
+}
+
+model Message {
+  id         String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  message    String
+  receiverId String
+  receiver   User   @relation(fields: [receiverId], references: [id], onDelete: Cascade)
+}
